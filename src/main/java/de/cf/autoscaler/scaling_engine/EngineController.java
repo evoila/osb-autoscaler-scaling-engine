@@ -51,12 +51,6 @@ public class EngineController {
 	@Value("${cf.adminpassword}")
 	private String cf_secret;
 	
-	@Value("${cf.organization}")
-	private String cf_organization;
-	
-	@Value("${cf.space}")
-	private String cf_space;
-	
 	@Value("#{'${engine.platforms.supported}'.split(',')}")
 	private List<String> supportedPlatforms;
 	
@@ -71,10 +65,8 @@ public class EngineController {
 
 			response = scaleCFApplication(resourceId, requestBody);
 			if (response != null) {
-				return response;
-				
-			} else {
 				log.info("Tried to scale " + resourceId + ", but could not find the resource");
+				return response;
 				
 			}
 			log.info("Scaling " + resourceId + " to " + requestBody.getScale());
@@ -146,8 +138,8 @@ public class EngineController {
                 .cloudFoundryClient(cfClient)
                 .dopplerClient(dopplerClient)
                 .uaaClient(uaaClient)
-                .organization(cf_organization)
-                .space(cf_space)
+                .organization(request.getContext().getOrganization_guid())
+                .space(request.getContext().getSpace_guid())
                 .build();
         
         String appName = getCFApplicationName(resourceId, ops);
