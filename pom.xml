@@ -1,0 +1,109 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>de.cf.autoscaler</groupId>
+  <artifactId>scaling_engine</artifactId>
+  <version>1.0</version>
+  <packaging>jar</packaging>
+
+  <name>scaling_engine</name>
+  <url>http://maven.apache.org</url>
+
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+  
+  	<dependency>
+		<groupId>de.cf.autoscaler</groupId>
+  		<artifactId>api</artifactId>
+  		<version>0.1</version>
+	</dependency>
+	
+    <dependency>
+    	<groupId>org.springframework.boot</groupId>	
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>1.5.1.RELEASE</version>
+    </dependency>
+
+    <dependency>
+    	<groupId>com.fasterxml.jackson.core</groupId>
+    	<artifactId>jackson-core</artifactId>
+    	<version>2.8.6</version>
+	</dependency>
+    	
+	<!-- CF Client  -->
+	 <dependency>
+        <groupId>org.cloudfoundry</groupId>
+        <artifactId>cloudfoundry-client-reactor</artifactId>
+        <version>2.14.0.RELEASE</version>
+    </dependency>
+     
+    <dependency>
+        <groupId>org.cloudfoundry</groupId>
+        <artifactId>cloudfoundry-operations</artifactId>
+        <version>2.14.0.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>io.projectreactor</groupId>
+        <artifactId>reactor-core</artifactId>
+        <version>3.0.7.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>io.projectreactor.ipc</groupId>
+        <artifactId>reactor-netty</artifactId>
+        <version>0.6.3.RELEASE</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>io.netty</groupId>
+	    <artifactId>netty-tcnative</artifactId>
+	    <version>2.0.0.Final</version>
+	</dependency>	 	    
+    <!--  /CF Client -->
+    
+  </dependencies>
+  
+   <repositories>
+    <repository>
+        <id>spring-releases</id>
+        <name>Spring Releases</name>
+        <url>http://repo.spring.io/release</url>
+    </repository>
+    <repository>
+        <id>spring-milestones</id>
+        <name>Spring Milestones</name>
+        <url>http://repo.spring.io/milestone</url>
+    </repository>
+    <repository>
+        <id>spring-snapshots</id>
+        <name>Spring Snapshots</name>
+        <url>http://repo.spring.io/snapshot</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+  
+ <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
