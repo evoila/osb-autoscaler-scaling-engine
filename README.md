@@ -4,9 +4,10 @@
 ## API
 Every call to the scaling-engine needs a `secret` header with the prearranged secret for authorization for now.
 You can set the secret of the scaling-engine in the `application.properties` via the `scaler.secret` property.
+
 | Endpoint | Body | Description |
 | ------ | ------ | ------ |
-| POST /resources/{resourceId} | [body](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de/cf/autoscaler/api/ScalingRequest.java) | Tries to identify and scale a resource by the given `resourceId` and the given [context](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de/cf/autoscaler/api/binding/BindingContext.java) to the given instance count `scale`.|
+| POST /resources/{resourceId} | [body](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de/cf/autoscaler/api/ScalingRequest.java) | Tries to identify and scale a resource by the given `resourceId` and the given [context](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de/cf/autoscaler/api/binding/BindingContext.java) to the given instance count `scale`. |
 
 Example body:
 ```json
