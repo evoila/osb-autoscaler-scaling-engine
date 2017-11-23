@@ -32,6 +32,8 @@ This project uses Apache Maven as build management tool. You should download the
 
 ## Configuration
 
+Remember to create an application.properties file with following valid properties.
+
 | Property | Description |
 | ------ | ------ |
 | scaler.secret | Secret string for authorization of incoming calls |
@@ -41,6 +43,8 @@ This project uses Apache Maven as build management tool. You should download the
 | cf.space | Space guid on cloudfoundry |
 | cf.adminname | Name of the authorized cloudfoundry user |
 | cf.adminpassword | Password of the authorized cloudfoundry user |
+
+
 
 ### Version
 v1.0
