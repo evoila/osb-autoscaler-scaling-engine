@@ -8,8 +8,9 @@ You can set the secret of the scaling-engine in the `application.properties` via
 | Endpoint | Body | Description |
 | ------ | ------ | ------ |
 | POST /resources/{resourceId} | [body](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de/cf/autoscaler/api/ScalingRequest.java) | Tries to identify and scale a resource by the given `resourceId` and the given [context](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de/cf/autoscaler/api/binding/BindingContext.java) to the given instance count `scale`. |
+| POST /namefromid/{resourceId} | [body](https://github.com/evoila/osb-autoscaler-api/blob/develop/src/main/java/de/cf/autoscaler/api/ApplicationNameRequest.java)|Tries to identify a resource and return the name the platform has for the resource, if one exists. Returns the object from the request in the body with the updated name. |
 
-Example body:
+Example body for a scaling request:
 ```json
 {
 "context" : {
@@ -18,6 +19,19 @@ Example body:
 	"organization_guid" : "example_org"
     },
 "scale" : 42
+}
+```
+
+Example body of a name request:
+```json
+{
+    "id": "12345-ExampleId-67890",
+    "name": "",
+    "context": {
+        "platform": "cloudfoundry",
+        "space_guid": "example_space",
+        "organization_guid": "example_org"
+    }
 }
 ```
 
@@ -39,8 +53,6 @@ Remember to create an application.properties file with following valid propertie
 | scaler.secret | Secret string for authorization of incoming calls |
 | engine.platforms.supported | List of supported platforms seperated via ',' |
 | cf.url | API Endpoint of the cloudfoundry instance |
-| cf.organization | Organization guid on cloudfoundry |
-| cf.space | Space guid on cloudfoundry |
 | cf.adminname | Name of the authorized cloudfoundry user |
 | cf.adminpassword | Password of the authorized cloudfoundry user |
 
