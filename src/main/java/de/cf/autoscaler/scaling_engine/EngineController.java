@@ -61,14 +61,7 @@ public class EngineController {
 			ResponseEntity<?> response = cfValidationService.validateScalingRequest(resourceId, requestBody);
 			if (response != null) 
 				return response;
-			
-			String appName = cfService.getAppNameFromId(resourceId, requestBody.getContext());
-	        if (appName == null) {
-	        	log.info("Tried to scale " + resourceId + ", but could not find the resource");
-	        	return new ResponseEntity<String>("{ \"error\" : \"no matching resource found\" }",HttpStatus.NOT_FOUND);
-	        }
 	        
-	        log.info("Scaling '" + appName + "' / '" + resourceId + "' to " + requestBody.getScale() + " instances.");
 			response = cfService.scaleCFApplication(resourceId, requestBody);
 			if (response != null)
 				return response;

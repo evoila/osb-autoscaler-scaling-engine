@@ -67,15 +67,19 @@ public class CFService {
 	
 	public ResponseEntity<?> scaleCFApplication(String resourceId, ScalingRequest request) {
 		
+		String orgName = getOrganizationNameFromId(request.getContext().getOrganization_guid());
+		String spaceName = getSpaceNameFromId(request.getContext().getSpace_guid(), orgName);
+		
         CloudFoundryOperations ops = DefaultCloudFoundryOperations.builder()
                 .cloudFoundryClient(cfClient)
-                .organization(request.getContext().getOrganization_guid())
-                .space(request.getContext().getSpace_guid())
+                .organization(orgName)
+                .space(spaceName)
                 .build();
         
         String appName = getAppNameFromId(resourceId, request.getContext());
         
         if (appName == null) {
+        	log.info("Tried to scale " + resourceId + ", but could not find the resource");
         	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{ \"error\" : \"no matching resource found\" }");
         }
         
@@ -85,6 +89,7 @@ public class CFService {
         		.name(appName)
         		.build();
         try {
+        	log.info("Scaling '" + appName + "' / '" + resourceId + "' to " + request.getScale() + " instances.");
         	ops.applications().scale(req).block(java.time.Duration.ofMillis(TIMEOUT_SCALING));
         } catch (IllegalStateException ex) {
         	log.error("Ran into timeout of " + TIMEOUT_SCALING + "ms while waiting for a scaling request");
@@ -97,30 +102,33 @@ public class CFService {
 		CloudFoundryOperations ops = DefaultCloudFoundryOperations.builder()
                 .cloudFoundryClient(cfClient)
                 .build();
-		return getCFOrganizationName(orgId, ops);
+		
+		String orgName = getCFOrganizationName(orgId, ops);
+		
+		//If the names of the org is already given in the context masked as guid; might be removed later
+		if (orgName == null || orgName.isEmpty())
+			return orgId;
+		return orgName;
 	}
 	
-	public String getSpaceNameFromId(String spaceId, String orgName, BindingContext context) {
+	public String getSpaceNameFromId(String spaceId, String orgName) {
 		
 		CloudFoundryOperations ops = DefaultCloudFoundryOperations.builder()
 				.cloudFoundryClient(cfClient)
 				.organization(orgName)
 				.build();
-		return getCFSpaceName(spaceId, ops);
+		
+		String spaceName = getCFSpaceName(spaceId, ops);
+		
+		//If the name of the space is already given in the context masked as guid; might be removed later
+		if (spaceName == null || spaceName.isEmpty())
+			return spaceId;
+		return spaceName;
 	}
 	
 	public String getAppNameFromId(String resourceId, BindingContext context) {
 		String orgName = getOrganizationNameFromId(context.getOrganization_guid());
-		
-		//If already the names of the org is already given in the context as guid, might be removed later
-		if (orgName == null || orgName.isEmpty())
-			orgName = context.getOrganization_guid();
-
-		String spaceName = getSpaceNameFromId(context.getSpace_guid(), orgName, context);
-		
-		//If already the name of the space is already given in the context as guid, might be removed later
-		if (spaceName == null || spaceName.isEmpty())
-			spaceName = context.getSpace_guid();
+		String spaceName = getSpaceNameFromId(context.getSpace_guid(), orgName);
 		
 		log.info("Looking for name of app with id '" + resourceId + "' for organization '" + orgName + "' in space '" + spaceName + "'.");
 		CloudFoundryOperations ops = DefaultCloudFoundryOperations.builder()
