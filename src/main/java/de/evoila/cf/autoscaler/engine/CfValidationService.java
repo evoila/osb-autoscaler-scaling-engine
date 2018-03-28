@@ -1,19 +1,18 @@
-package de.cf.autoscaler.scaling_engine.cf_services;
+package de.evoila.cf.autoscaler.engine;
 
 import java.util.List;
 
+import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
+import de.evoila.cf.autoscaler.api.ScalingRequest;
+import de.evoila.cf.autoscaler.api.binding.BindingContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import de.cf.autoscaler.api.ApplicationNameRequest;
-import de.cf.autoscaler.api.ScalingRequest;
-import de.cf.autoscaler.api.binding.BindingContext;
-
-public class CFValidationService {
+public class CfValidationService {
 
 	private List<String> supportedPlatforms;
 	
-	public CFValidationService(List<String> supportedPlatforms) {
+	public CfValidationService(List<String> supportedPlatforms) {
 		this.supportedPlatforms = supportedPlatforms;
 	}
 	

@@ -1,8 +1,10 @@
-package de.cf.autoscaler.scaling_engine.cf_services;
+package de.evoila.cf.autoscaler.engine;
 
 import java.util.Iterator;
 import java.util.List;
 
+import de.evoila.cf.autoscaler.api.ScalingRequest;
+import de.evoila.cf.autoscaler.api.binding.BindingContext;
 import org.cloudfoundry.client.CloudFoundryClient;
 import org.cloudfoundry.operations.CloudFoundryOperations;
 import org.cloudfoundry.operations.DefaultCloudFoundryOperations;
@@ -20,49 +22,35 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import de.cf.autoscaler.api.ScalingRequest;
-import de.cf.autoscaler.api.binding.BindingContext;
-
-public class CFService {
+public class CfService {
 	
-	private Logger log = LoggerFactory.getLogger(CFService.class);
+	private Logger log = LoggerFactory.getLogger(CfService.class);
 	private static final long TIMEOUT_SCALING = 15000L;
 	
 	private CloudFoundryClient cfClient;
 	
 	private String apiHost;
-	private String cf_username;
-	private String cf_secret;
+	private String cfUsername;
+	private String cfSecret;
 
-	public CFService(String api, String username, String secret) {
+	public CfService(String api, String username, String secret) {
 		this.apiHost = api;
-		this.cf_username = username;
-		this.cf_secret = secret;
-		
-		
+		this.cfUsername = username;
+		this.cfSecret = secret;
+
 		ConnectionContext con = DefaultConnectionContext.builder()
                 .apiHost(apiHost)
                 .build();
 
         TokenProvider prov = PasswordGrantTokenProvider.builder()
-                .password(cf_secret)
-                .username(cf_username)
+                .password(cfSecret)
+                .username(cfUsername)
                 .build();
 
         cfClient = ReactorCloudFoundryClient.builder()
                 .connectionContext(con)
                 .tokenProvider(prov)
                 .build();
-
-//        ReactorDopplerClient dopplerClient = ReactorDopplerClient.builder()
-//                .connectionContext(con)
-//                .tokenProvider(prov)
-//                .build();
-//
-//        ReactorUaaClient uaaClient = ReactorUaaClient.builder()
-//                .connectionContext(con)
-//                .tokenProvider(prov)
-//                .build();
 	}
 	
 	public ResponseEntity<?> scaleCFApplication(String resourceId, ScalingRequest request) {

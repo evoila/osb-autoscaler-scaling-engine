@@ -1,16 +1,16 @@
-package de.cf.autoscaler.scaling_engine;
+package de.evoila;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
-@SpringBootApplication(exclude = org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class)
-public class EngineApp {
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
+public class Application {
 
 	public static void main(String[] args) {
-		
-        ApplicationContext ctx = SpringApplication.run(EngineApp.class, args);
+        ApplicationContext ctx = SpringApplication.run(Application.class, args);
         Assert.notNull(ctx, "Could not properly start the application.");
 	}
 }
