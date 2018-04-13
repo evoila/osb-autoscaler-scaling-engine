@@ -1,14 +1,15 @@
 package de.evoila.cf.autoscaler.engine;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
+import de.evoila.cf.autoscaler.engine.model.CfBean;
+import de.evoila.cf.autoscaler.engine.model.EngineBean;
+import de.evoila.cf.autoscaler.engine.model.ScalerBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,33 +28,27 @@ public class EngineController {
 	
 	private CfService cfService;
 	private CfValidationService cfValidationService;
+
+	@Autowired
+    private ScalerBean scalerBean;
 	
-	@Value("${scaler.secret}")
-	private String secret;
+    @Autowired
+    private CfBean cfBean;
 	
-	@Value("${cf.url}")
-	private String apiHost;
-	
-	@Value("${cf.adminname}")
-	private String cf_username;
-	
-	@Value("${cf.adminpassword}")
-	private String cf_secret;
-	
-	@Value("#{'${engine.platforms.supported}'.split(',')}")
-	private List<String> supportedPlatforms;
+	@Autowired
+    private EngineBean engineBean;
 	
 	@PostConstruct
 	private void init() {
-		cfService = new CfService(apiHost, cf_username, cf_secret);
-		cfValidationService = new CfValidationService(supportedPlatforms);
+		cfService = new CfService(cfBean.getApi(), cfBean.getUsername(), cfBean.getPassword());
+		cfValidationService = new CfValidationService(engineBean.getEnginePlatform().getSupported());
 	}
 	
 	@RequestMapping (value = "/resources/{resourceId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> scale(@RequestHeader(value="secret") String secret,
                                    @RequestBody ScalingRequest requestBody, @PathVariable("resourceId") String resourceId) {
 		
-		if (secret.equals(this.secret)) {
+		if (secret.equals(scalerBean.getSecret())) {
 			ResponseEntity<?> response = cfValidationService.validateScalingRequest(resourceId, requestBody);
 			if (response != null) 
 				return response;
@@ -73,7 +68,7 @@ public class EngineController {
 	public ResponseEntity<?> getAppNameFromId(@RequestHeader(value="secret") String secret, @PathVariable("resourceId") String resourceId, 
 			@RequestBody ApplicationNameRequest request) {
 		
-		if (secret.equals(this.secret)) {
+		if (secret.equals(scalerBean.getSecret())) {
 			ResponseEntity<?> response = cfValidationService.validateNameRequest(resourceId, request);
 			if (response != null)
 				return response;
