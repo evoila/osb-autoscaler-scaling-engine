@@ -6,6 +6,7 @@ import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
 import de.evoila.cf.autoscaler.engine.model.CfBean;
 import de.evoila.cf.autoscaler.engine.model.EngineBean;
+import de.evoila.cf.autoscaler.engine.model.EnginePlatform;
 import de.evoila.cf.autoscaler.engine.model.ScalerBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,14 @@ public class EngineController {
     @Autowired
     private CfBean cfBean;
 	
+	
 	@Autowired
-    private EngineBean engineBean;
+	private EnginePlatform enginePlatforms;
 	
 	@PostConstruct
 	private void init() {
 		cfService = new CfService(cfBean.getApi(), cfBean.getUsername(), cfBean.getPassword());
-		cfValidationService = new CfValidationService(engineBean.getEnginePlatform().getSupported());
+		cfValidationService = new CfValidationService(enginePlatforms.getSupported());
 	}
 	
 	@RequestMapping (value = "/resources/{resourceId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

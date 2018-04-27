@@ -4,3 +4,6 @@ manifest.yml
 .settings/
 target/
 src/main/resources/application.properties
+osb-autoscaler-scaling-engine/cf-service-broker-autoscaler.log
+osb-autoscaler-scaling-engine/osb-autoscaler-core.log
+osb-autoscaler-scaling-engine/src/main/resources/old-application.properties
