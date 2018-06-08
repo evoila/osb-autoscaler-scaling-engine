@@ -5,18 +5,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "cf")
 public class CfBean {
 
-    private String api;
+    private String apiHost;
 
     private String username;
 
     private String password;
 
-    public String getApi() {
-        return api;
+    public String getApiHost() {
+        return apiHost;
     }
 
-    public void setApi(String api) {
-        this.api = api;
+    public void setApiHost(String apiHost) {
+        this.apiHost = apiHost;
     }
 
     public String getUsername() {

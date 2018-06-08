@@ -5,7 +5,6 @@ import javax.annotation.PostConstruct;
 import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
 import de.evoila.cf.autoscaler.engine.model.CfBean;
-import de.evoila.cf.autoscaler.engine.model.EngineBean;
 import de.evoila.cf.autoscaler.engine.model.EnginePlatform;
 import de.evoila.cf.autoscaler.engine.model.ScalerBean;
 import org.slf4j.Logger;
@@ -42,7 +41,7 @@ public class EngineController {
 	
 	@PostConstruct
 	private void init() {
-		cfService = new CfService(cfBean.getApi(), cfBean.getUsername(), cfBean.getPassword());
+		cfService = new CfService(cfBean.getApiHost(), cfBean.getUsername(), cfBean.getPassword());
 		cfValidationService = new CfValidationService(enginePlatforms.getSupported());
 	}
 	
