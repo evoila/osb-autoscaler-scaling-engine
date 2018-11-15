@@ -2,6 +2,9 @@ package de.evoila.cf.autoscaler.engine.model;
 
 import java.util.List;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "engine.platforms")
 public class EnginePlatform {
 
     private List<String> supported;
