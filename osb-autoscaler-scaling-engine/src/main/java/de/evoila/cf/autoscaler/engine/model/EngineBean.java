@@ -5,13 +5,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "engine")
 public class EngineBean {
 
-    private EnginePlatform enginePlatform;
+    private EnginePlatform platforms;
 
-    public EnginePlatform getEnginePlatform() {
-        return enginePlatform;
+    public EnginePlatform getPlatforms() {
+        return platforms;
     }
 
-    public void setEnginePlatform(EnginePlatform enginePlatform) {
-        this.enginePlatform = enginePlatform;
+    public void setPlatforms(EnginePlatform platforms) {
+        this.platforms = platforms;
     }
 }

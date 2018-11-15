@@ -22,9 +22,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class CfService {
+/**
+ * @author Marius Berger
+ */
+public class CloudFoundryService {
 	
-	private Logger log = LoggerFactory.getLogger(CfService.class);
+	private Logger log = LoggerFactory.getLogger(CloudFoundryService.class);
 	private static final long TIMEOUT_SCALING = 15000L;
 	
 	private CloudFoundryClient cfClient;
@@ -33,7 +36,7 @@ public class CfService {
 	private String cfUsername;
 	private String cfSecret;
 
-	public CfService(String api, String username, String secret) {
+	public CloudFoundryService(String api, String username, String secret) {
 		this.apiHost = api;
 		this.cfUsername = username;
 		this.cfSecret = secret;

@@ -3,7 +3,7 @@ package de.evoila.cf.autoscaler.engine.model;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "cf")
-public class CfBean {
+public class CloudFoundryConfigurationBean {
 
     private String api;
 

@@ -8,11 +8,14 @@ import de.evoila.cf.autoscaler.api.binding.BindingContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class CfValidationService {
+/**
+ * @author Marius Berger
+ */
+public class CloudFoundryValidationService {
 
 	private List<String> supportedPlatforms;
 	
-	public CfValidationService(List<String> supportedPlatforms) {
+	public CloudFoundryValidationService(List<String> supportedPlatforms) {
 		this.supportedPlatforms = supportedPlatforms;
 	}
 	

@@ -1,10 +1,8 @@
 package de.evoila.cf.autoscaler.engine;
 
-import javax.annotation.PostConstruct;
-
 import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
-import de.evoila.cf.autoscaler.engine.model.CfBean;
+import de.evoila.cf.autoscaler.engine.model.CloudFoundryConfigurationBean;
 import de.evoila.cf.autoscaler.engine.model.EngineBean;
 import de.evoila.cf.autoscaler.engine.model.ScalerBean;
 import org.slf4j.Logger;
@@ -14,34 +12,35 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 
+/**
+ * @author Marius Berger
+ */
 @Controller
 public class EngineController {
 	
 	private Logger log = LoggerFactory.getLogger(EngineController.class);
 	
-	private CfService cfService;
-	private CfValidationService cfValidationService;
+	private CloudFoundryService cloudFoundryService;
+
+	private CloudFoundryValidationService cloudFoundryValidationService;
 
 	@Autowired
     private ScalerBean scalerBean;
 	
     @Autowired
-    private CfBean cfBean;
+    private CloudFoundryConfigurationBean cloudFoundryConfigurtionBean;
 	
 	@Autowired
     private EngineBean engineBean;
 	
 	@PostConstruct
 	private void init() {
-		cfService = new CfService(cfBean.getApi(), cfBean.getUsername(), cfBean.getPassword());
-		cfValidationService = new CfValidationService(engineBean.getEnginePlatform().getSupported());
+		cloudFoundryService = new CloudFoundryService(cloudFoundryConfigurtionBean.getApi(), cloudFoundryConfigurtionBean.getUsername(), cloudFoundryConfigurtionBean.getPassword());
+		cloudFoundryValidationService = new CloudFoundryValidationService(engineBean.getPlatforms().getSupported());
 	}
 	
 	@RequestMapping (value = "/resources/{resourceId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,11 +48,11 @@ public class EngineController {
                                    @RequestBody ScalingRequest requestBody, @PathVariable("resourceId") String resourceId) {
 		
 		if (secret.equals(scalerBean.getSecret())) {
-			ResponseEntity<?> response = cfValidationService.validateScalingRequest(resourceId, requestBody);
+			ResponseEntity<?> response = cloudFoundryValidationService.validateScalingRequest(resourceId, requestBody);
 			if (response != null) 
 				return response;
 	        
-			response = cfService.scaleCFApplication(resourceId, requestBody);
+			response = cloudFoundryService.scaleCFApplication(resourceId, requestBody);
 			if (response != null)
 				return response;
 			
@@ -69,11 +68,11 @@ public class EngineController {
 			@RequestBody ApplicationNameRequest request) {
 		
 		if (secret.equals(scalerBean.getSecret())) {
-			ResponseEntity<?> response = cfValidationService.validateNameRequest(resourceId, request);
+			ResponseEntity<?> response = cloudFoundryValidationService.validateNameRequest(resourceId, request);
 			if (response != null)
 				return response;
 			
-			String appName = cfService.getAppNameFromId(resourceId, request.getContext());
+			String appName = cloudFoundryService.getAppNameFromId(resourceId, request.getContext());
 			if (appName == null) {
 				log.info("Tried to get the name of " + resourceId + ", but could not find the resource");
 	        	return new ResponseEntity<>("{ \"error\" : \"no matching resource found\" }",HttpStatus.NOT_FOUND);
