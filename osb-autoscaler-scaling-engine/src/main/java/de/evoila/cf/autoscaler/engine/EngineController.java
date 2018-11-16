@@ -50,10 +50,10 @@ public class EngineController {
 	}
 	
 	@PostMapping(value = "/resources/{resourceId}")
-	public ResponseEntity scale(@RequestHeader(value="secret") String secret,
+	public ResponseEntity scale(@RequestHeader("X-Auth-Token") String xAuthToken,
                                    @RequestBody ScalingRequest requestBody, @PathVariable("resourceId") String resourceId) {
 		
-		if (secret.equals(scalerBean.getSecret())) {
+		if (xAuthToken.equals(scalerBean.getSecret())) {
 			ResponseEntity<?> response = cloudFoundryValidationService.validateScalingRequest(resourceId, requestBody);
 			if (response != null) 
 				return response;
@@ -68,10 +68,10 @@ public class EngineController {
 	}
 	
 	@PostMapping(value = "/namefromid/{resourceId}")
-	public ResponseEntity nameFromId(@RequestHeader(value="secret") String secret, @PathVariable("resourceId") String resourceId,
+	public ResponseEntity nameFromId(@RequestHeader("X-Auth-Token") String xAuthToken, @PathVariable("resourceId") String resourceId,
 			@RequestBody ApplicationNameRequest request) {
 		
-		if (secret.equals(scalerBean.getSecret())) {
+		if (xAuthToken.equals(scalerBean.getSecret())) {
 			ResponseEntity response = cloudFoundryValidationService.validateNameRequest(resourceId, request);
 			if (response != null)
 				return response;
