@@ -7,12 +7,13 @@ import de.evoila.cf.autoscaler.engine.model.EngineBean;
 import de.evoila.cf.autoscaler.engine.model.ScalerBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.annotation.PostConstruct;
 
@@ -28,23 +29,28 @@ public class EngineController {
 
 	private CloudFoundryValidationService cloudFoundryValidationService;
 
-	@Autowired
     private ScalerBean scalerBean;
 	
-    @Autowired
     private CloudFoundryConfigurationBean cloudFoundryConfigurtionBean;
 	
-	@Autowired
     private EngineBean engineBean;
-	
+
+	public EngineController(ScalerBean scalerBean, CloudFoundryConfigurationBean cloudFoundryConfigurationBean,
+                            EngineBean engineBean) {
+	    this.scalerBean = scalerBean;
+	    this.cloudFoundryConfigurtionBean = cloudFoundryConfigurationBean;
+	    this.engineBean = engineBean;
+    }
+
 	@PostConstruct
 	private void init() {
-		cloudFoundryService = new CloudFoundryService(cloudFoundryConfigurtionBean.getApi(), cloudFoundryConfigurtionBean.getUsername(), cloudFoundryConfigurtionBean.getPassword());
+		cloudFoundryService = new CloudFoundryService(cloudFoundryConfigurtionBean.getApi(), cloudFoundryConfigurtionBean.getUsername(),
+                cloudFoundryConfigurtionBean.getPassword());
 		cloudFoundryValidationService = new CloudFoundryValidationService(engineBean.getPlatforms().getSupported());
 	}
 	
-	@RequestMapping (value = "/resources/{resourceId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> scale(@RequestHeader(value="secret") String secret,
+	@PostMapping(value = "/resources/{resourceId}")
+	public ResponseEntity scale(@RequestHeader(value="secret") String secret,
                                    @RequestBody ScalingRequest requestBody, @PathVariable("resourceId") String resourceId) {
 		
 		if (secret.equals(scalerBean.getSecret())) {
@@ -56,19 +62,17 @@ public class EngineController {
 			if (response != null)
 				return response;
 			
-			
-			return ResponseEntity.status(HttpStatus.OK).body("{}");
+			return new ResponseEntity(HttpStatus.OK);
 		}
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{ \"error\" : \"wrong secret\" }");
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 	}
 	
-	@RequestMapping (value = "/namefromid/{resourceId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getAppNameFromId(@RequestHeader(value="secret") String secret, @PathVariable("resourceId") String resourceId, 
+	@PostMapping(value = "/namefromid/{resourceId}")
+	public ResponseEntity nameFromId(@RequestHeader(value="secret") String secret, @PathVariable("resourceId") String resourceId,
 			@RequestBody ApplicationNameRequest request) {
 		
 		if (secret.equals(scalerBean.getSecret())) {
-			ResponseEntity<?> response = cloudFoundryValidationService.validateNameRequest(resourceId, request);
+			ResponseEntity response = cloudFoundryValidationService.validateNameRequest(resourceId, request);
 			if (response != null)
 				return response;
 			
@@ -80,8 +84,8 @@ public class EngineController {
 			
 			log.info("Returning name '" + appName + "' for the id '" + resourceId + "'.");
 			request.setName(appName);
-			return new ResponseEntity<>(request,HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
 		}
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{ \"error\" : \"wrong secret\" }");
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 	}
 }
