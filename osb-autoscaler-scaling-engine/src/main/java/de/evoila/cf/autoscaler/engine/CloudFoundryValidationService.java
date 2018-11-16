@@ -3,6 +3,8 @@ package de.evoila.cf.autoscaler.engine;
 import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
 import de.evoila.cf.autoscaler.api.binding.BindingContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -12,6 +14,8 @@ import java.util.List;
  * @author Marius Berger
  */
 public class CloudFoundryValidationService {
+
+    private Logger log = LoggerFactory.getLogger(CloudFoundryValidationService.class);
 
 	private List<String> supportedPlatforms;
 	
@@ -38,15 +42,21 @@ public class CloudFoundryValidationService {
 	}
 	
 	private ResponseEntity validateIdAndContext(String resourceId, BindingContext context) {
+	    String errorMessage = null;
 		if (!validId(resourceId))
-            return new ResponseEntity("{ \"error\" : \"resourceId contains invalid characters\" }", HttpStatus.BAD_REQUEST);
+            errorMessage = "{ \"error\" : \"resourceId contains invalid characters\" }";
 		if (!supportedPlatform(context.getPlatform()))
-            return new ResponseEntity("{ \"error\" : \"platform is not supported\" }", HttpStatus.BAD_REQUEST);
+            errorMessage = "{ \"error\" : \"platform is not supported\" }";
 		if (!validId(context.getSpace_guid()))
-            return new ResponseEntity("{ \"error\" : \"space_guid contains invalid characters\" }", HttpStatus.BAD_REQUEST);
+            errorMessage = "{ \"error\" : \"space_guid contains invalid characters\" }";
 		if (!validId(context.getOrganization_guid()))
-            return new ResponseEntity("{ \"error\" : \"organization_guid contains invalid characters\" }", HttpStatus.BAD_REQUEST);
-		return null;
+            errorMessage = "{ \"error\" : \"organization_guid contains invalid characters\" }";
+
+		if (errorMessage != null) {
+		    log.info("Error validation request with: " + errorMessage);
+            return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
+        } else
+            return null;
 	}
 	
 	private boolean supportedPlatform(String platform) {

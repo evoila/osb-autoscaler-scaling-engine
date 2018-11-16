@@ -84,7 +84,7 @@ public class EngineController {
 			
 			log.info("Returning name '" + appName + "' for the id '" + resourceId + "'.");
 			request.setName(appName);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(request, HttpStatus.OK);
 		}
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 	}
