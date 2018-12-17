@@ -1,5 +1,6 @@
 package de.evoila.cf.autoscaler.engine;
 
+import de.evoila.cf.autoscaler.api.ErrorResponse;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
 import de.evoila.cf.autoscaler.api.binding.BindingContext;
 import de.evoila.cf.autoscaler.engine.exceptions.OrgNotFoundException;
@@ -76,7 +77,7 @@ public class CloudFoundryService {
 
         if (appName == null) {
         	log.info("Tried to scale " + resourceId + ", but could not find the resource");
-        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{ \"error\" : \"no matching resource found\" }");
+        	return new ResponseEntity<ErrorResponse>(new ErrorResponse("no matching resource found"), HttpStatus.NOT_FOUND);
         }
 
         ScaleApplicationRequest req = ScaleApplicationRequest
@@ -89,7 +90,7 @@ public class CloudFoundryService {
         	ops.applications().scale(req).block(java.time.Duration.ofMillis(TIMEOUT_SCALING));
         } catch (IllegalStateException ex) {
         	log.error("Ran into timeout of " + TIMEOUT_SCALING + "ms while waiting for a scaling request");
-        	return new ResponseEntity<String>("{ \"error\" : \"timeout while waiting for the response of the cloudfoundry instance\" }",HttpStatus.REQUEST_TIMEOUT);
+        	return new ResponseEntity<ErrorResponse>(new ErrorResponse("timeout while waiting for the response of the cloudfoundry instance"),HttpStatus.REQUEST_TIMEOUT);
         }
         return null;
 	}

@@ -1,6 +1,7 @@
 package de.evoila.cf.autoscaler.engine;
 
 import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
+import de.evoila.cf.autoscaler.api.ErrorResponse;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
 import de.evoila.cf.autoscaler.engine.exceptions.OrgNotFoundException;
 import de.evoila.cf.autoscaler.engine.exceptions.ResourceNotFoundException;
@@ -67,6 +68,7 @@ public class EngineController {
 					return response;
 			} catch (OrgNotFoundException | SpaceNotFoundException | ResourceNotFoundException ex) {
 				log.error("Could not find one of the components", ex);
+				return new ResponseEntity<ErrorResponse>(new ErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
 			}
 			return new ResponseEntity(HttpStatus.OK);
 		}
@@ -87,7 +89,7 @@ public class EngineController {
 				appName = cloudFoundryService.getCFApplicationName(resourceId);
 			} catch (ResourceNotFoundException ex) {
 				log.info("Tried to get the name of " + resourceId + ", but could not find the resource");
-				return new ResponseEntity<String>("{ \"error\" : \"no matching resource found\" }",HttpStatus.NOT_FOUND);
+				return new ResponseEntity<ErrorResponse>(new ErrorResponse("no matching resource found"),HttpStatus.NOT_FOUND);
 			}
 
 			log.info("Returning name '" + appName + "' for the id '" + resourceId + "'.");

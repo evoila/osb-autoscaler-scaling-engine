@@ -1,6 +1,7 @@
 package de.evoila.cf.autoscaler.engine;
 
 import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
+import de.evoila.cf.autoscaler.api.ErrorResponse;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
 import de.evoila.cf.autoscaler.api.binding.BindingContext;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class CloudFoundryValidationService {
 		if (( response = validateIdAndContext(resourceId, request.getContext())) != null)
 			return response;
 		if (request.getScale() < 0) 
-			return new ResponseEntity("{ \"error\" : \"scale is smaller than 0\" }", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<ErrorResponse>(new ErrorResponse("scale is smaller than 0"), HttpStatus.BAD_REQUEST);
 		
 		return null;
 	}
@@ -44,17 +45,17 @@ public class CloudFoundryValidationService {
 	private ResponseEntity validateIdAndContext(String resourceId, BindingContext context) {
 	    String errorMessage = null;
 		if (!validId(resourceId))
-            errorMessage = "{ \"error\" : \"resourceId contains invalid characters\" }";
+            errorMessage = "resourceId contains invalid characters";
 		if (!supportedPlatform(context.getPlatform()))
-            errorMessage = "{ \"error\" : \"platform is not supported\" }";
+            errorMessage = "platform is not supported";
 		if (!validId(context.getSpace_guid()))
-            errorMessage = "{ \"error\" : \"space_guid contains invalid characters\" }";
+            errorMessage = "space_guid contains invalid characters";
 		if (!validId(context.getOrganization_guid()))
-            errorMessage = "{ \"error\" : \"organization_guid contains invalid characters\" }";
+            errorMessage = "organization_guid contains invalid characters";
 
 		if (errorMessage != null) {
 		    log.info("Error validation request with: " + errorMessage);
-            return new ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(errorMessage), HttpStatus.BAD_REQUEST);
         } else
             return null;
 	}
