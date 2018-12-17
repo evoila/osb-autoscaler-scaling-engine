@@ -1,15 +1,13 @@
 package de.evoila.cf.autoscaler.engine;
 
-import de.evoila.Application;
 import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
 import de.evoila.cf.autoscaler.engine.exceptions.OrgNotFoundException;
 import de.evoila.cf.autoscaler.engine.exceptions.ResourceNotFoundException;
 import de.evoila.cf.autoscaler.engine.exceptions.SpaceNotFoundException;
-import de.evoila.cf.autoscaler.engine.model.CloudFoundryConfigurationBean;
-import de.evoila.cf.autoscaler.engine.model.EngineBean;
-import de.evoila.cf.autoscaler.engine.model.ScalerBean;
-import org.cloudfoundry.client.v3.spaces.Space;
+import de.evoila.cf.autoscaler.engine.properties.CloudFoundryConfigurationBean;
+import de.evoila.cf.autoscaler.engine.properties.EngineBean;
+import de.evoila.cf.autoscaler.engine.properties.ScalerBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

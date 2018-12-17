@@ -1,4 +1,4 @@
-package de.evoila.cf.autoscaler.engine.model;
+package de.evoila.cf.autoscaler.engine.properties;
 
 import java.util.List;
 
