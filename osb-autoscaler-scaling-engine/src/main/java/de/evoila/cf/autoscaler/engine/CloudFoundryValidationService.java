@@ -26,20 +26,13 @@ public class CloudFoundryValidationService {
 	
 	
 	public ResponseEntity validateNameRequest(String resourceId, ApplicationNameRequest request) {
-		ResponseEntity response;
-		if ((response = validateIdAndContext(resourceId, request.getContext())) != null)
-			return response;
-		return null;
+		return validateIdAndContext(resourceId, request.getContext());
 	}
 	
 	public ResponseEntity validateScalingRequest(String resourceId, ScalingRequest request) {
-		ResponseEntity response;
-		if (( response = validateIdAndContext(resourceId, request.getContext())) != null)
-			return response;
-		if (request.getScale() < 0) 
+		if (request.getScale() < 0)
 			return new ResponseEntity<ErrorResponse>(new ErrorResponse("scale is smaller than 0"), HttpStatus.BAD_REQUEST);
-		
-		return null;
+		return validateIdAndContext(resourceId, request.getContext());
 	}
 	
 	private ResponseEntity validateIdAndContext(String resourceId, BindingContext context) {
