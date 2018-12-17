@@ -2,4 +2,4 @@
 ### Logging ###
 logging:
   level:
-    root: DEBUG
+    root: INFO
