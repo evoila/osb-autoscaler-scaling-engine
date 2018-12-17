@@ -56,27 +56,17 @@
         <dependency>
             <groupId>org.cloudfoundry</groupId>
             <artifactId>cloudfoundry-client-reactor</artifactId>
-            <version>2.14.0.RELEASE</version>
+            <version>3.9.0.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.cloudfoundry</groupId>
             <artifactId>cloudfoundry-operations</artifactId>
-            <version>2.14.0.RELEASE</version>
+            <version>3.9.0.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>3.0.7.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>io.projectreactor.ipc</groupId>
-            <artifactId>reactor-netty</artifactId>
-            <version>0.6.3.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-tcnative</artifactId>
-            <version>2.0.0.Final</version>
+            <version>3.1.7.RELEASE</version>
         </dependency>
         <!--  /CF Client -->
     </dependencies>

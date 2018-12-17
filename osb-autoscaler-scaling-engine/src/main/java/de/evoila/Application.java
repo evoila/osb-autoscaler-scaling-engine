@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableConfigurationProperties({ CloudFoundryConfigurationBean.class, EngineBean.class, ScalerBean.class })
-public class Application implements WebMvcConfigurer {
+public class Application  {
 
 	public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(Application.class, args);

@@ -1,10 +1,15 @@
 package de.evoila.cf.autoscaler.engine;
 
+import de.evoila.Application;
 import de.evoila.cf.autoscaler.api.ApplicationNameRequest;
 import de.evoila.cf.autoscaler.api.ScalingRequest;
+import de.evoila.cf.autoscaler.engine.exceptions.OrgNotFoundException;
+import de.evoila.cf.autoscaler.engine.exceptions.ResourceNotFoundException;
+import de.evoila.cf.autoscaler.engine.exceptions.SpaceNotFoundException;
 import de.evoila.cf.autoscaler.engine.model.CloudFoundryConfigurationBean;
 import de.evoila.cf.autoscaler.engine.model.EngineBean;
 import de.evoila.cf.autoscaler.engine.model.ScalerBean;
+import org.cloudfoundry.client.v3.spaces.Space;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -57,34 +62,39 @@ public class EngineController {
 			ResponseEntity<?> response = cloudFoundryValidationService.validateScalingRequest(resourceId, requestBody);
 			if (response != null) 
 				return response;
-	        
-			response = cloudFoundryService.scaleCFApplication(resourceId, requestBody);
-			if (response != null)
-				return response;
-			
+
+			try {
+				response = cloudFoundryService.scaleCFApplication(resourceId, requestBody);
+				if (response != null)
+					return response;
+			} catch (OrgNotFoundException | SpaceNotFoundException | ResourceNotFoundException ex) {
+				log.error("Could not find one of the components", ex);
+			}
 			return new ResponseEntity(HttpStatus.OK);
 		}
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 	}
 	
 	@PostMapping(value = "/namefromid/{resourceId}")
-	public ResponseEntity nameFromId(@RequestHeader("X-Auth-Token") String xAuthToken, @PathVariable("resourceId") String resourceId,
+	public ResponseEntity<?> nameFromId(@RequestHeader("X-Auth-Token") String xAuthToken, @PathVariable("resourceId") String resourceId,
 			@RequestBody ApplicationNameRequest request) {
 		
 		if (xAuthToken.equals(scalerBean.getSecret())) {
 			ResponseEntity response = cloudFoundryValidationService.validateNameRequest(resourceId, request);
 			if (response != null)
 				return response;
-			
-			String appName = cloudFoundryService.getAppNameFromId(resourceId, request.getContext());
-			if (appName == null) {
+
+			String appName = "";
+			try {
+				appName = cloudFoundryService.getCFApplicationName(resourceId);
+			} catch (ResourceNotFoundException ex) {
 				log.info("Tried to get the name of " + resourceId + ", but could not find the resource");
-	        	return new ResponseEntity<>("{ \"error\" : \"no matching resource found\" }",HttpStatus.NOT_FOUND);
+				return new ResponseEntity<String>("{ \"error\" : \"no matching resource found\" }",HttpStatus.NOT_FOUND);
 			}
-			
+
 			log.info("Returning name '" + appName + "' for the id '" + resourceId + "'.");
 			request.setName(appName);
-            return new ResponseEntity(request, HttpStatus.OK);
+            return new ResponseEntity<ApplicationNameRequest>(request, HttpStatus.OK);
 		}
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 	}
